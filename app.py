@@ -29,19 +29,19 @@ def authenticate(
     openai_api_key = (
         openai_api_key
         or os.environ.get("OPENAI_API_KEY")
-        or st.secrets.get("OPENAI_API_KEY")
+        or st.secrets.get("openai")["api_key"]
     )
     os.environ["OPENAI_API_KEY"] = openai_api_key
     PINECONE_API_KEY = (
         PINECONE_API_KEY
         or os.environ.get("PINECONE_API_KEY")
-        or st.secrets.get("PINECONE_API_KEY")
+        or st.secrets.get("pinecone")["api_key"]
     )
     os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
     PINECONE_ENV = (
         PINECONE_ENV
         or os.environ.get("PINECONE_ENV")
-        or st.secrets.get("PINECONE_ENV")
+        or st.secrets.get("pinecone")["env"]
     )
     os.environ["PINECONE_ENV"] = PINECONE_ENV
     if not (openai_api_key and PINECONE_API_KEY and PINECONE_ENV):
