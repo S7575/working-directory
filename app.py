@@ -29,7 +29,7 @@ def authenticate(
     openai_api_key = (
         openai_api_key
         or os.environ.get("OPENAI_API_KEY")
-        or st.secrets.get("openai")["api_key"]
+        or st.secrets.get["openai"]["api_key"]
     )
     os.environ["OPENAI_API_KEY"] = openai_api_key
     PINECONE_API_KEY = (
