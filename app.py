@@ -195,7 +195,7 @@ functions = [
         "Admin",
     ]
 
-openai_api_key = os.environ.get("openai_key")
+openai_api_key = st.secrets.get("openai_key", os.environ.get("openai_key"))
 with st.sidebar:
     st.title("Authenticating Credentials")
     with st.form("authentication"):
@@ -204,6 +204,7 @@ with st.sidebar:
             type="password",
             #help=OPENAI_HELP,
             placeholder="This field is mandatory",
+            value=openai_api_key
         )
         PINECONE_API_KEY = st.text_input(
             "Pinecone API Key",
