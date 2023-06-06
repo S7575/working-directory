@@ -195,7 +195,7 @@ functions = [
         "Admin",
     ]
 
-openai_api_key = ""
+openai_api_key = os.environ.get("openai_key")
 with st.sidebar:
     st.title("Authenticating Credentials")
     with st.form("authentication"):
