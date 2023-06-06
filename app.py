@@ -66,6 +66,9 @@ def authenticate(
     st.sidebar.success("Authentification successful!")
     # return True
 
+    # Print the contents of the secrets file
+    st.write(st.secrets())
+
 # # Page options and header
 # st.set_option("client.showErrorDetails", True)
 
