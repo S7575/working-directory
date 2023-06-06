@@ -74,7 +74,7 @@ def main():
     st.markdown(
         """
         <div style='text-align: center;'>
-            <h1>🧠 AI Chatbot</h1>
+            <h1>🧠 AI Chatbot - mod</h1>
         </div>
         """,
         unsafe_allow_html=True,
