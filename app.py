@@ -13,7 +13,6 @@ from langchain.chains.conversational_retrieval.prompts import CONDENSE_QUESTION_
 from langchain.chains.question_answering import load_qa_chain
 from langchain.vectorstores import Pinecone
 import pinecone 
-import openai_secret_manager
 
 
 logger = logging.getLogger("AI_Chatbot")
@@ -125,13 +124,9 @@ def admin():
 
 def chat():
 
-    secrets = openai_secret_manager.get_secret("openai")
-    os.environ["OPENAI_API_KEY"] = secrets["api_key"]
-
-
     pinecone_index = "aichat"
     text_field = "text"
-    embeddings = OpenAIEmbeddings(model = 'text-embedding-ada-002', openai_api_key=os.environ["OPENAI_API_KEY"])
+    embeddings = OpenAIEmbeddings(model = 'text-embedding-ada-002')
     index = pinecone.Index(pinecone_index)
     db = Pinecone(index, embeddings.embed_query, text_field)
     retriever = db.as_retriever()
