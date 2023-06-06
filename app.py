@@ -22,20 +22,20 @@ st.set_page_config(
 
 
 def authenticate(
-    openai_api_key: str, PINECONE_API_KEY: str, PINECONE_ENV: str
+    openai_key: str, pinecone_key: str, pinecone_env: str
 ) -> None:
     # Validate all credentials are set and correct
     # Check for env variables to enable local dev and deployments with shared credentials
-    openai_api_key = (st.secrets["openai"]["api_key"]
-    )
-    os.environ["OPENAI_API_KEY"] = openai_api_key
-    PINECONE_API_KEY = (st.secrets["pinecone"]["api_key"]
-    )
-    os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
-    PINECONE_ENV = ( st.secrets["pinecone"]["env"]
-    )
-    os.environ["PINECONE_ENV"] = PINECONE_ENV
-    if not (openai_api_key and PINECONE_API_KEY and PINECONE_ENV):
+    openai_api_key = st.secrets["openai"]["api_key"]
+
+    os.environ["openai_key"] = openai_key
+    pinecone_key = st.secrets["pinecone"]["api_key"]
+    
+    os.environ["pinecone_key"] = pinecone_key
+    pinecone_env = st.secrets["pinecone"]["env"]
+    
+    os.environ["pinecone_env"] = pinecone_env
+    if not (openai_api_key and pinecone_key and pinecone_env):
         st.session_state["auth_ok"] = False
         st.error("Credentials neither set nor stored")#, icon=PAGE_ICON)
         return
@@ -50,9 +50,9 @@ def authenticate(
         return
     # store credentials in the session state
     st.session_state["auth_ok"] = True
-    st.session_state["openai_api_key"] = openai_api_key
-    st.session_state["PINECONE_API_KEY"] = PINECONE_API_KEY
-    st.session_state["PINECONE_ENV"] = PINECONE_ENV
+    st.session_state["openai_key"] = openai_key
+    st.session_state["pinecone_key"] = pinecone_key
+    st.session_state["pinecone_env"] = pinecone_env
     logger.info("Authentification successful!")
     st.sidebar.success("Authentification successful!")
     # return True
