@@ -26,7 +26,7 @@ def authenticate(
 ) -> None:
     # Validate all credentials are set and correct
     # Check for env variables to enable local dev and deployments with shared credentials
-    openai_api_key = st.secrets["openai"]["api_key"]
+    openai_key = st.secrets["openai"]["api_key"]
 
     os.environ["openai_key"] = openai_key
     pinecone_key = st.secrets["pinecone"]["api_key"]
@@ -35,14 +35,14 @@ def authenticate(
     pinecone_env = st.secrets["pinecone"]["env"]
     
     os.environ["pinecone_env"] = pinecone_env
-    if not (openai_api_key and pinecone_key and pinecone_env):
+    if not (openai_key and pinecone_key and pinecone_env):
         st.session_state["auth_ok"] = False
         st.error("Credentials neither set nor stored")#, icon=PAGE_ICON)
         return
     try:
         # Try to access openai and deeplake
         with st.spinner("Authentifying..."):
-            openai.api_key = openai_api_key
+            openai.api_key = openai_key
     except Exception as e:
         logger.error(f"Authentication failed with {e}")
         st.session_state["auth_ok"] = False
@@ -85,7 +85,7 @@ def main():
     
 def admin():
     pinecone_index = "aichat"
-    pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
+    pinecone.init(api_key=pinecone_key, environment=PINECONE_ENV)
     #index_description = pinecone.describe_index(pinecone_index)
     if pinecone_index in pinecone.list_indexes():
         index = pinecone.Index(pinecone_index)
@@ -196,18 +196,18 @@ functions = [
         "Admin",
     ]
 
-openai_api_key = st.secrets.get("openai_key", os.environ.get("openai_key"))
+openai_key = st.secrets.get("openai_key", os.environ.get("openai_key"))
 with st.sidebar:
     st.title("Authenticating Credentials")
     with st.form("authentication"):
-        openai_api_key = st.text_input(
+        openai_key = st.text_input(
             "OpenAI API Key",
             type="password",
             #help=OPENAI_HELP,
             placeholder="This field is mandatory",
-            value=openai_api_key
+            value=openai_key
         )
-        PINECONE_API_KEY = st.text_input(
+        pinecone_key = st.text_input(
             "Pinecone API Key",
             type="password",
             #help=ACTIVELOOP_HELP,
@@ -221,7 +221,7 @@ with st.sidebar:
         )
         submitted = st.form_submit_button("Submit")
     if submitted:
-        authenticate(openai_api_key, PINECONE_API_KEY, PINECONE_ENV)
+        authenticate(openai_key, pinecone_key, PINECONE_ENV)
 
 selected_function = st.sidebar.selectbox("Select Option", functions)
 if selected_function == "Home":
