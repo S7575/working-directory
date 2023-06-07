@@ -64,6 +64,7 @@ def authenticate(
 # st.set_option("client.showErrorDetails", True)
 
 
+
 def main():
     st.markdown(
         """
@@ -126,7 +127,7 @@ def chat():
 
     pinecone_index = "aichat"
     text_field = "text"
-    embeddings = OpenAIEmbeddings(model = 'text-embedding-ada-002')
+    embeddings = OpenAIEmbeddings(model='text-embedding-ada-002', openai_api_key='openai_key')
     index = pinecone.Index(pinecone_index)
     db = Pinecone(index, embeddings.embed_query, text_field)
     retriever = db.as_retriever()
@@ -188,48 +189,5 @@ def chat():
 
 
 
-#os.environ["OPENAI_API_KEY"] = openai_api_key
 
-functions = [
-        "Home",
-        "AI Chatbot",
-        "Admin",
-    ]
 
-openai_key = st.secrets.get("openai_key", os.environ.get("openai_key"))
-with st.sidebar:
-    st.title("Authenticating Credentials")
-    with st.form("authentication"):
-        openai_key = st.text_input(
-            "OpenAI API Key",
-            type="password",
-            #help=OPENAI_HELP,
-            placeholder="This field is mandatory",
-            value=openai_key
-        )
-        pinecone_key = st.text_input(
-            "Pinecone API Key",
-            type="password",
-            #help=ACTIVELOOP_HELP,
-            placeholder="This field is mandatory",
-        )
-        PINECONE_ENV = st.text_input(
-            "Pinecone Env",
-            type="password",
-            #help=ACTIVELOOP_HELP,
-            placeholder="This field is mandatory",
-        )
-        submitted = st.form_submit_button("Submit")
-    if submitted:
-        authenticate(openai_key, pinecone_key, PINECONE_ENV)
-
-selected_function = st.sidebar.selectbox("Select Option", functions)
-if selected_function == "Home":
-    main()
-elif selected_function == "AI Chatbot":
-    chat()
-elif selected_function == "Admin":
-    passw = st.sidebar.text_input("Enter your password: ", type="password")
-    if passw == "ai4chat":
-        admin()
-    
