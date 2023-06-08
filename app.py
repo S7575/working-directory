@@ -205,7 +205,7 @@ with st.sidebar:
             type="password",
             #help=OPENAI_HELP,
             placeholder="This field is mandatory",
-            value=openai_key
+            value = 'none'
         )
         pinecone_key = st.text_input(
             "Pinecone API Key",
