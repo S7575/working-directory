@@ -51,7 +51,7 @@ def main():
     st.markdown(
         """
         <div style='text-align: center;'>
-            <h4>Der Chatbot ist ein Probeexemplar und darf gerne getestet werden. Im linken Bereich kann man "Chatbot" auswählen, um in Interaktion zu treten</h4>
+            <h4>Der Chatbot ist ein Probeexemplar und darf gerne getestet werden. Im linken Bereich kann man "Chatbot" auswählen,<br />um in Interaktion zu treten</h4>
         </div>
         """,
         unsafe_allow_html=True,
