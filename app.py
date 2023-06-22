@@ -238,14 +238,11 @@ def chat():
         st.session_state['past'].append(user_input)
         st.session_state['generated'].append(output)
 
-    # define avatar url
-    custom_avatar_url = "https://i.postimg.cc/zDtXxddw/BEMAGOZ.png"
-
     # Display chat messages edit Chat emoji
     if st.session_state['generated']:
         for i in range(len(st.session_state['generated'])-1, -1, -1):
-            message(st.session_state["generated"][i], key=str(i), avatar_style="custom_avatar_url")
-            message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="big-smile",)
+            message(st.session_state["generated"][i], key=str(i), avatar_style="denticon")
+            message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="initials",)
     
     # Reset chat session state
     if res:
