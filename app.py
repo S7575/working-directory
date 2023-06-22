@@ -42,7 +42,7 @@ def main():
     st.markdown(
         """
         <div style='text-align: center;'>
-            <h1>🧠 AI Chatbot</h1>
+            <h1>Chatbot für die Abrechnung nach GOZ und BEMA</h1>
         </div>
         """,
         unsafe_allow_html=True,
@@ -51,7 +51,8 @@ def main():
     st.markdown(
         """
         <div style='text-align: center;'>
-            <h4>⚡️ Interacting with customized AI!</h4>
+            <h4>Der Chatbot ist ein Probeexemplar und darf gerne getestet werden. Im linken Bereich kann man "Chatbot" auswähnlen,
+              um in Interaktion zu treten</h4>
         </div>
         """,
         unsafe_allow_html=True,
@@ -223,7 +224,7 @@ def chat():
         st.session_state['history'] = []
 
     if 'generated' not in st.session_state:
-        st.session_state['generated'] = ["Hello ! Ask me your queries" + " 🤗"]
+        st.session_state['generated'] = ["Derzeit kann ich auf Daten zu der GOZ Nr. 0010 und BEMA Nr. 01 zugreifen. Bitte die Fragen ausführlich stellen."]
 
     if 'past' not in st.session_state:
         st.session_state['past'] = ["Hey ! 👋"]
