@@ -258,7 +258,7 @@ functions = [
     ]
 
 # Display a select box in the sidebar to choose the desired function
-selected_function = st.sidebar.selectbox("Select Option", functions)
+selected_function = st.sidebar.selectbox("Bitte auswählen:", functions)
 
 # Call the main() function if "Home" is selected
 if selected_function == "Home":
