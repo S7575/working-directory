@@ -59,8 +59,12 @@ def main():
 
     
 def admin():
+    # Set the Pinecone index name
     pinecone_index = "aichat"
+
+    # Initialize Pinecone with API key and environment
     pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
+   
     # Check if the Pinecone index exists
     # if pinecone_index in pinecone.list_indexes():
     #     index = pinecone.Index(pinecone_index)
@@ -68,12 +72,19 @@ def admin():
 
     #     # Display the available documents in the index
     #     st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
+    
+    # Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
     uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], label_visibility="collapsed")#, accept_multiple_files = True
+    
     if uploaded_files is not None:
+        # Extract the file extension
         file_extension =  os.path.splitext(uploaded_files.name)[1]
+        
+        # Create a temporary file and write the uploaded file content
         with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
             tmp_file.write(uploaded_files.read())
+            
             # Process the uploaded file based on its extension
             if file_extension == ".pdf":
                 loader = PyPDFLoader(tmp_file.name)
@@ -81,33 +92,58 @@ def admin():
             elif file_extension == ".txt":
                 loader = TextLoader(file_path=tmp_file.name, encoding="utf-8")
                 pages = loader.load_and_split()
+
         # loader = PyPDFLoader(tmp_file.name)
         # pages = loader.load_and_split()
+
+        # Remove the temporary file
         os.remove(tmp_file.name)
+
+
         # Display the uploaded file content
         file_container = st.expander(f"Click here to see your uploaded {uploaded_files.name} file:")
         file_container.write(pages)
+
+        # Initialize OpenAI embeddings
         embeddings = OpenAIEmbeddings(model = 'text-embedding-ada-002')
+        
+        # Display success message
         st.success("Document Loaded Successfully!")
+
+        # Checkbox for the first time document upload
         first_t = st.checkbox('Uploading Document First time.')
         st.write("---")
+
+        # Checkbox for subsequent document uploads
         second_t = st.checkbox('Uploading Document Second time and onwards...')
         if first_t:
+            # Delete the existing index if it exists
             if pinecone_index in pinecone.list_indexes():
                 pinecone.delete_index(pinecone_index)
             time.sleep(50)
             st.info('Initializing Document Uploading to DB...')
+            
+            # Create a new Pinecone index
             pinecone.create_index(
                     name=pinecone_index,
                     metric='cosine',
                     dimension=1536  # 1536 dim of text-embedding-ada-002
                     )
             time.sleep(80)
+            
+            # Upload documents to the Pinecone index
             vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index)
+            
+            # Display success message            
             st.success("Document Uploaded Successfully!")
+
         elif second_t:
             st.info('Initializing Document Uploading to DB...')
+            
+            # Upload documents to the Pinecone index
             vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index)
+            
+            # Display success message
             st.success("Document Uploaded Successfully!")
 
 
@@ -176,6 +212,7 @@ def chat():
         # docs = db.similarity_search(query)
         # qa = load_qa_chain(llm=llm, chain_type="stuff")
         # Run the query through the RetrievalQA model
+        
         result = qa.run(query) #chain({"question": query, "chat_history": st.session_state['history']})
         st.session_state['history'].append((query, result))#["answer"]))
     
