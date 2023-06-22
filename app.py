@@ -223,10 +223,10 @@ def chat():
         st.session_state['history'] = []
 
     if 'generated' not in st.session_state:
-        st.session_state['generated'] = ["Test"]
+        st.session_state['generated'] = ["Derzeit sind Fragen zu der GOZ 0010 und BEMA 01 möglich"]
 
     if 'past' not in st.session_state:
-        st.session_state['past'] = ["Hey aa! 👋"]
+        st.session_state['past'] = ["Hallo"]
     
     # Reset chat button
     res = st.button("Reset Chat")
