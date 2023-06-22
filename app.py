@@ -212,7 +212,7 @@ def chat():
         # docs = db.similarity_search(query)
         # qa = load_qa_chain(llm=llm, chain_type="stuff")
         # Run the query through the RetrievalQA model
-        
+
         result = qa.run(query) #chain({"question": query, "chat_history": st.session_state['history']})
         st.session_state['history'].append((query, result))#["answer"]))
     
@@ -238,10 +238,13 @@ def chat():
         st.session_state['past'].append(user_input)
         st.session_state['generated'].append(output)
 
-    # Display chat messages
+    # define avatar url
+    custom_avatar_url = "https://play-lh.googleusercontent.com/z_rbvu1tU8CRomJRIPpZpW0uCwJBQU8vtHUETL_kFLr5LDic4rS4J2NsJJVnWer6ZUs"
+
+    # Display chat messages edit Chat emoji
     if st.session_state['generated']:
         for i in range(len(st.session_state['generated'])-1, -1, -1):
-            message(st.session_state["generated"][i], key=str(i), avatar_style="thumbs")
+            message(st.session_state["generated"][i], key=str(i), avatar_style="custom_avatar_url")
             message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="big-smile",)
     
     # Reset chat session state
