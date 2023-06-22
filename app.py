@@ -241,8 +241,8 @@ def chat():
     # Display chat messages edit Chat emoji
     if st.session_state['generated']:
         for i in range(len(st.session_state['generated'])-1, -1, -1):
-            message(st.session_state["generated"][i], key=str(i), avatar_style="thumbs")
-            message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="initials",)
+            message(st.session_state["generated"][i], key=str(i), avatar_style="lorelei-neutral")
+            message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="identicon",)
     
     # Reset chat session state
     if res:
