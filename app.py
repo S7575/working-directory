@@ -191,7 +191,7 @@ def chat():
                 # User input
                 user_input = st.text_area(
                     "Query:",
-                    placeholder="Ask me your queries...",
+                    placeholder="Eingabefeld",
                     key="input_",
                     label_visibility="collapsed",
                 )
@@ -226,10 +226,10 @@ def chat():
         st.session_state['generated'] = ["Derzeit sind Fragen zu der GOZ 0010 und BEMA 01 möglich"]
 
     if 'past' not in st.session_state:
-        st.session_state['past'] = ["Hallo"]
+        st.session_state['past'] = ["Hallo!"]
     
     # Reset chat button
-    res = st.button("Reset Chat")
+    res = st.button("Chat zurücksetzen")
 
     # Prompt form input and chat processing
     is_ready, user_input = prompt_form()
