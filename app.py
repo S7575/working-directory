@@ -239,7 +239,7 @@ def chat():
         st.session_state['generated'].append(output)
 
     # define avatar url
-    custom_avatar_url = "https://play-lh.googleusercontent.com/z_rbvu1tU8CRomJRIPpZpW0uCwJBQU8vtHUETL_kFLr5LDic4rS4J2NsJJVnWer6ZUs"
+    custom_avatar_url = "https://i.postimg.cc/brH0j7sv/BEMAGOZ.png"
 
     # Display chat messages edit Chat emoji
     if st.session_state['generated']:
