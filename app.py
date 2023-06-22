@@ -167,7 +167,7 @@ def chat():
     retriever = db.as_retriever()
 
     # Enable GPT-4 model selection
-    mod = st.sidebar.checkbox('Access GPT-4')
+    mod = st.sidebar.checkbox('GPT-4 Zugang (derzeit noch nicht verfügbar)')
     if mod:
         pas = st.sidebar.text_input("Write access code", type="password")
         if pas == "ongpt":
@@ -197,7 +197,7 @@ def chat():
                 )
 
                 # Submit button
-                submit_button = st.form_submit_button(label="Send")
+                submit_button = st.form_submit_button(label="Absenden")
                 
                 # Check if the form is ready
                 is_ready = submit_button and user_input
