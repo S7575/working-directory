@@ -64,6 +64,8 @@ def admin():
 
     active_indexes = pinecone.list_indexes()
 
+    print(active_indexes)
+
     # Initialize Pinecone with API key and environment
     pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
    
