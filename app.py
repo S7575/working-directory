@@ -223,7 +223,7 @@ def chat():
         st.session_state['history'] = []
 
     if 'generated' not in st.session_state:
-        st.session_state['generated'] = ["Derzeit sind Fragen zu der GOZ 0010 und BEMA 01 möglich"]
+        st.session_state['generated'] = ["Testpahse zu GOZ Nr. 0010, Füllungstherapie, Abrechnung allgemein, Besipielformulare zur PZR etc"]
 
     if 'past' not in st.session_state:
         st.session_state['past'] = ["Hallo!"]
