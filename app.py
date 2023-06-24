@@ -62,6 +62,8 @@ def admin():
     # Set the Pinecone index name
     pinecone_index = "aichat"
 
+    active_indexes = pinecone.list_indexes()
+
     # Initialize Pinecone with API key and environment
     pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
    
