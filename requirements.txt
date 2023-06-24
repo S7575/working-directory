@@ -5,4 +5,5 @@ openai
 tiktoken
 pypdf
 pinecone-client
+beautifulsoup4
 
