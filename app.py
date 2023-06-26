@@ -157,7 +157,7 @@ def chat():
     pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
     
     # Set the model name and Pinecone index name
-    model_name = "gpt-3.5-turbo" 
+    model_name = "gpt-3.5-turbo-16k-0613" 
     pinecone_index = "aichat"
 
     # Set the text field for embeddings
@@ -176,7 +176,7 @@ def chat():
     if mod:
         pas = st.sidebar.text_input("Zugangscode", type="password")
         if pas == "ongpt":
-            MODEL_OPTIONS = ["gpt-3.5-turbo", "gpt-4"]
+            MODEL_OPTIONS = ["gpt-3.5-turbo-16k-0613", "gpt-4"]
             model_name = st.sidebar.selectbox(label="Auswahl:", options=MODEL_OPTIONS)
 
     
