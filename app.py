@@ -107,6 +107,7 @@ def admin():
     uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], label_visibility="collapsed")#, accept_multiple_files = True
     
     if uploaded_files is not None:
+
         # Extract the file extension
         file_extension =  os.path.splitext(uploaded_files.name)[1]
 
@@ -176,7 +177,7 @@ def admin():
 
 def chat():
     # Set the model name and Pinecone index name
-    model_name = "gpt-3.5-turbo" 
+    model_name = "gpt-3.5-turbo-16k-0613" 
     pinecone_index = "aichat"
 
     # Set the text field for embeddings
@@ -208,7 +209,7 @@ def chat():
     if mod:
         pas = st.sidebar.text_input("Write access code", type="password")
         if pas == "ongpt":
-            MODEL_OPTIONS = ["gpt-3.5-turbo", "gpt-4"]
+            MODEL_OPTIONS = ["gpt-3.5-turbo-16k-0613", "gpt-4"]
             model_name = st.sidebar.selectbox(label="Select Model", options=MODEL_OPTIONS)
 
     
