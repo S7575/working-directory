@@ -61,7 +61,7 @@ def admin():
     # Set the Pinecone index name
     pinecone_index = "aichat"
 
-    # Initialize Pinecone with API key and environment 1
+    # Initialize Pinecone with API key and environment
     pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
 
     #namespa = st.text_input("Enter Namespace Name: ")
