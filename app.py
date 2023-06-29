@@ -79,7 +79,7 @@ def admin():
             options = list(index_stats_response['namespaces'].keys())
             
             # Create a dropdown list
-            selected_namespace = st.selectbox("Select a namespace", options, key="namespace_selection" + str(time.time))
+            selected_namespace = st.selectbox("Select a namespace", options, key="namespace_selection" + str(time.time()))
             st.warning("Use 'Uploading Document Second time and onwards...' button to upload docs in existing namespace!", icon="⚠️")
 
             # Display the selected value
