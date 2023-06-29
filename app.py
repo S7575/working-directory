@@ -111,7 +111,7 @@ def admin():
 
     # Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
-    uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], label_visibility="collapsed")#, accept_multiple_files = True
+    uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], accept_multiple_files=True, label_visibility="collapsed")
     
     if uploaded_files is not None:
 
@@ -138,6 +138,8 @@ def admin():
 
         # Display the uploaded file content
         file_container = st.expander(f"Click here to see your uploaded {uploaded_files.name} file:")
+        for i, pages in enumerate(all_pages):
+        file_container.subheader(f"Uploaded File {i+1}")
         file_container.write(pages)
 
         # Display success message
