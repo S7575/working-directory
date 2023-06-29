@@ -154,12 +154,12 @@ def admin():
             st.success("Document Loaded Successfully!")
 
             # Checkbox for the first time document upload
-            first_t = st.checkbox('Uploading Document First time.')
+            first_t = st.checkbox('Uploading Document First time.', key='first_upload')
 
             st.write("---")
 
             # Checkbox for subsequent document uploads
-            second_t = st.checkbox('Uploading Document Second time and onwards...')
+            second_t = st.checkbox('Uploading Document Second time and onwards...', key='subsequent_upload')
 
             if first_t:
                 # Delete the existing index if it exists
