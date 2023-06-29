@@ -114,6 +114,9 @@ def admin():
         with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
             tmp_file.write(uploaded_files.read())
         
+        # Initialize pages with an empty list
+        pages = []
+
         # Process the uploaded file based on its extension
         if file_extension == ".pdf":
             loader = PyPDFLoader(tmp_file.name)
