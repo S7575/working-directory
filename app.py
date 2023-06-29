@@ -119,7 +119,7 @@ def admin():
         for file in uploaded_files:
         
             # Extract the file extension
-            file_extension =  os.path.splitext(uploaded_files.name)[1]
+            file_extension =  os.path.splitext(file.name)[1]
 
             # Create a temporary file and write the uploaded file content
             with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
@@ -141,6 +141,11 @@ def admin():
 
             # Display the uploaded file content
             file_container = st.expander(f"Click here to see your uploaded {uploaded_files.name} file:")
+
+            all_pages = []
+            for file in uploaded_files:
+                all_pages.append(file.read())
+                
             for i, pages in enumerate(all_pages):
                 file_container.subheader(f"Uploaded File {i+1}")
                 file_container.write(pages)
