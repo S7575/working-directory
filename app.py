@@ -101,8 +101,9 @@ def admin():
 
     if new_name:
         selected_namespace = st.text_input("Enter Namespace Name: ")
+        pinecone.save_index_config(index_name=selected_namespace)
 
-    # Prompt the user to upload PDF/TXT files
+            # Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
     uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], label_visibility="collapsed")#, accept_multiple_files = True
     
@@ -148,7 +149,7 @@ def admin():
             # Delete the existing index if it exists
             if pinecone_index in pinecone.list_indexes():
                 pinecone.delete_index(pinecone_index)
-            time.sleep(50)
+            time.sleep(20)
             st.info('Initializing Document Uploading to DB...')
 
             # Create a new Pinecone index
@@ -157,7 +158,7 @@ def admin():
                     metric='cosine',
                     dimension=1536  # 1536 dim of text-embedding-ada-002
                     )
-            time.sleep(50)
+            time.sleep(20)
 
             # Upload documents to the Pinecone index
             vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
