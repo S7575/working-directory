@@ -101,8 +101,9 @@ def admin():
 
     if new_name:
         selected_namespace = st.text_input("Enter Namespace Name: ")
-        
+
         # Upsert vectors while creating a new namespace
+        index = pinecone.Index(pinecone_index)
         index.upsert(vectors=[('id-1', [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])],
         namespace = selected_namespace)
 
