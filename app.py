@@ -139,8 +139,8 @@ def admin():
         # Display the uploaded file content
         file_container = st.expander(f"Click here to see your uploaded {uploaded_files.name} file:")
         for i, pages in enumerate(all_pages):
-        file_container.subheader(f"Uploaded File {i+1}")
-        file_container.write(pages)
+            file_container.subheader(f"Uploaded File {i+1}")
+            file_container.write(pages)
 
         # Display success message
         st.success("Document Loaded Successfully!")
