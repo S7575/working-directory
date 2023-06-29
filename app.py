@@ -101,6 +101,7 @@ def admin():
 
     if new_name:
         selected_namespace = st.text_input("Enter Namespace Name: ")
+        index.upsert(items=[])
         index.create_namespaces([selected_namespace])
 
             # Prompt the user to upload PDF/TXT files
