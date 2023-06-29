@@ -61,6 +61,9 @@ def admin():
     # Set the Pinecone index name
     pinecone_index = "aichat"
 
+    #avoid not assigned error
+    selected_namespace = []
+
     # Initialize Pinecone with API key and environment
     pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
 
@@ -98,7 +101,7 @@ def admin():
                     index.delete(namespace=selected_namespace, delete_all=True)
                 st.success('Successfully Deleted Namespace!')
 
-
+    
     if new_name:
         selected_namespace = st.text_input("Enter Namespace Name: ")
 
