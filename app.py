@@ -75,14 +75,11 @@ def admin():
         if pinecone_index in pinecone.list_indexes():
             index = pinecone.Index(pinecone_index)
             index_stats_response = index.describe_index_stats()
-            # Display the available documents in the index
-            #st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
-            # Define the options for the dropdown list
 
             options = list(index_stats_response['namespaces'].keys())
             
             # Create a dropdown list
-            selected_namespace = st.selectbox("Select a namespace", options, key="namespace_selection")
+            selected_namespace = st.selectbox("Select a namespace", options, key="namespace_selection" + str(time.time))
             st.warning("Use 'Uploading Document Second time and onwards...' button to upload docs in existing namespace!", icon="⚠️")
 
             # Display the selected value
