@@ -101,7 +101,7 @@ def admin():
 
     if new_name:
         selected_namespace = st.text_input("Enter Namespace Name: ")
-        pinecone.save_index_config(index_name=selected_namespace)
+        index.create_namespaces([selected_namespace])
 
             # Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
