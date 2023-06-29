@@ -95,14 +95,14 @@ def admin():
         if first_t:
             if pinecone_index in pinecone.list_indexes():
                 pinecone.delete_index(pinecone_index)
-            time.sleep(50)
+            time.sleep(20)
             st.info('Initializing Document Uploading to DB...')
             pinecone.create_index(
                     name=pinecone_index,
                     metric='cosine',
                     dimension=1536  # 1536 dim of text-embedding-ada-002
                     )
-            time.sleep(80)
+            time.sleep(20)
             vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index)
             st.success("Document Uploaded Successfully!")
         elif second_t:
@@ -116,7 +116,7 @@ def chat():
     pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
     
     # Set the model name and Pinecone index name
-    model_name = "gpt-3.5-turbo" 
+    model_name = "gpt-3.5-turbo-16k-0613" 
     pinecone_index = "aichat"
 
     # Set the text field for embeddings
