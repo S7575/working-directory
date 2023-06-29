@@ -101,8 +101,10 @@ def admin():
 
     if new_name:
         selected_namespace = st.text_input("Enter Namespace Name: ")
-        index.upsert(items=[])
-        index.create_namespaces([selected_namespace])
+        
+        # Upsert vectors while creating a new namespace
+        index.upsert(vectors=[('id-1', [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])],
+        namespace = selected_namespace)
 
             # Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
