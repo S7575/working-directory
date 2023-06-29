@@ -68,6 +68,7 @@ def admin():
     exist_name = st.checkbox('Use Existing Namespace to Upload Docs')
     del_name = st.checkbox("Delete a Namespace")
     new_name = st.checkbox("Create New Namespace to Upload Docs")
+
     if exist_name:
         # Check if the Pinecone index exists
         time.sleep(10)
@@ -77,13 +78,16 @@ def admin():
             # Display the available documents in the index
             #st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
             # Define the options for the dropdown list
+
             options = list(index_stats_response['namespaces'].keys())
             
             # Create a dropdown list
-            selected_namespace = st.selectbox("Select a namespace", options)
+            selected_namespace = st.selectbox("Select a namespace", options, key="namespace_selection")
             st.warning("Use 'Uploading Document Second time and onwards...' button to upload docs in existing namespace!", icon="⚠️")
+
             # Display the selected value
             st.write("You selected:", selected_namespace)
+
     if del_name:
         if pinecone_index in pinecone.list_indexes():
             index = pinecone.Index(pinecone_index)
