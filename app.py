@@ -79,7 +79,7 @@ def admin():
             options = list(index_stats_response['namespaces'].keys())
             
             # Create a dropdown list
-            selected_namespace = st.selectbox("Select a namespace", options, key="namespace_selection" + str(time.time()))
+            selected_namespace = st.selectbox("Select a namespace", options) #, key="namespace_selection" + str(time.time())) sollte die Dropdown Problematik verhindern. Hat leider nicht funktioniert
             st.warning("Use 'Uploading Document Second time and onwards...' button to upload docs in existing namespace!", icon="⚠️")
 
             # Display the selected value
@@ -103,13 +103,13 @@ def admin():
     if new_name:
         selected_namespace = st.text_input("Enter Namespace Name: ")
 
-        # Upsert vectors while creating a new namespace
-        index = pinecone.Index(pinecone_index)
-        vector_dimension = 1536
-        vector = [0.1] * vector_dimension
-        index.upsert(vectors=[('id-1', vector)], namespace=selected_namespace)
+        # Upsert vectors while creating a new namespace: Um zu erreichen, dass der Namespace nicht erst mit einem Upload eingerichtet wird. Hat leider die Dropdown Problematik nicht verhindert.
+       # index = pinecone.Index(pinecone_index)
+       # vector_dimension = 1536
+       # vector = [0.1] * vector_dimension
+       # index.upsert(vectors=[('id-1', vector)], namespace=selected_namespace)
 
-            # Prompt the user to upload PDF/TXT files
+    # Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
     uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], label_visibility="collapsed")#, accept_multiple_files = True
     
