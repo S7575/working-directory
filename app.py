@@ -116,7 +116,7 @@ def admin():
         if uploaded_files is not None:
             all_pages = []
             
-            for file in uploaded_files:
+            for file_index, file in enumerate(uploaded_files):
                 # Extract the file extension
                 file_extension = os.path.splitext(file.name)[1]
 
