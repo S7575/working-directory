@@ -109,49 +109,47 @@ def admin():
        # vector = [0.1] * vector_dimension
        # index.upsert(vectors=[('id-1', vector)], namespace=selected_namespace)
 
-    # Prompt the user to upload PDF/TXT files
-    st.write("Upload PDF/TXT Files:")
-    uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], accept_multiple_files=True, label_visibility="collapsed")
+# Prompt the user to upload PDF/TXT files
+st.write("Upload PDF/TXT Files:")
+uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], accept_multiple_files=True, label_visibility="collapsed")
+
+if uploaded_files is not None:
+    all_pages = []
     
-    if uploaded_files is not None:
+    for file in uploaded_files:
+        # Extract the file extension
+        file_extension = os.path.splitext(file.name)[1]
 
-
-        for file in uploaded_files:
+        # Create a temporary file and write the uploaded file content
+        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+            tmp_file.write(file.read())
         
-            # Extract the file extension
-            file_extension =  os.path.splitext(file.name)[1]
+        # Process the uploaded file based on its extension
+        if file_extension == ".pdf":
+            loader = PyPDFLoader(tmp_file.name)
+            pages = loader.load_and_split()
+        elif file_extension == ".txt":
+            loader = TextLoader(file_path=tmp_file.name, encoding="utf-8")
+            pages = loader.load_and_split()
 
-            # Create a temporary file and write the uploaded file content
-            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                tmp_file.write(uploaded_files.read())
-            
-            # Process the uploaded file based on its extension
-            if file_extension == ".pdf":
-                loader = PyPDFLoader(tmp_file.name)
-                pages = loader.load_and_split()
-            elif file_extension == ".txt":
-                loader = TextLoader(file_path=tmp_file.name, encoding="utf-8")
-                pages = loader.load_and_split()
+        # Remove the temporary file
+        os.remove(tmp_file.name)
 
-            # Remove the temporary file
-            os.remove(tmp_file.name)
+        # Initialize OpenAI embeddings
+        embeddings = OpenAIEmbeddings(model='text-embedding-ada-002')
 
-            # Initialize OpenAI embeddings
-            embeddings = OpenAIEmbeddings(model = 'text-embedding-ada-002')
+        # Append the pages to all_pages list
+        all_pages.extend(pages)
 
-            # Display the uploaded file content
-            file_container = st.expander(f"Click here to see your uploaded {uploaded_files.name} file:")
+    # Display the uploaded file content
+    file_container = st.expander(f"Click here to see your uploaded {uploaded_files.name} file:")
 
-            all_pages = []
-            for file in uploaded_files:
-                all_pages.append(file.read())
-                
-            for i, pages in enumerate(all_pages):
-                file_container.subheader(f"Uploaded File {i+1}")
-                file_container.write(pages)
+    for i, pages in enumerate(all_pages):
+        file_container.subheader(f"Uploaded File {i+1}")
+        file_container.write(pages)
 
-            # Display success message
-            st.success("Document Loaded Successfully!")
+    # Display success message
+    st.success("Document Loaded Successfully!")
 
             # Checkbox for the first time document upload
             first_t = st.checkbox('Uploading Document First time.')
