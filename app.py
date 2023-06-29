@@ -176,7 +176,7 @@ def admin():
 
 def chat():
     # Set the model name and Pinecone index name
-    model_name = "gpt-3.5-turbo" 
+    model_name = "gpt-3.5-turbo-16k-0613" 
     pinecone_index = "aichat"
 
     # Set the text field for embeddings
