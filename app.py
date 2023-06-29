@@ -104,8 +104,9 @@ def admin():
 
         # Upsert vectors while creating a new namespace
         index = pinecone.Index(pinecone_index)
-        index.upsert(vectors=[('id-1', [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1])],
-        namespace = selected_namespace)
+        vector_dimension = 1536
+        vector = [0.1] * vector_dimension
+        index.upsert(vectors=[('id-1', vector)], namespace=selected_namespace)
 
             # Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
