@@ -110,43 +110,45 @@ def admin():
        # index.upsert(vectors=[('id-1', vector)], namespace=selected_namespace)
 
     # Prompt the user to upload PDF/TXT files
-        st.write("Upload PDF/TXT Files:")
-        uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], accept_multiple_files=True, label_visibility="collapsed")
+    st.write("Upload PDF/TXT Files:")
+    uploaded_files = st.file_uploader(
+        "Upload", type=["pdf", "txt"], accept_multiple_files=True, label_visibility="collapsed"
+    )
 
-        if uploaded_files is not None:
-            all_pages = []
-            
-            for file_index, file in enumerate(uploaded_files):
-                # Extract the file extension
-                file_extension = os.path.splitext(file.name)[1]
+    if uploaded_files is not None:
+        all_pages = []
 
-                # Create a temporary file and write the uploaded file content
-                with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-                    tmp_file.write(file.read())
-                
-                # Process the uploaded file based on its extension
-                if file_extension == ".pdf":
-                    loader = PyPDFLoader(tmp_file.name)
-                    pages = loader.load_and_split()
-                elif file_extension == ".txt":
-                    loader = TextLoader(file_path=tmp_file.name, encoding="utf-8")
-                    pages = loader.load_and_split()
+        for file_index, file in enumerate(uploaded_files):
+            # Extract the file extension
+            file_extension = os.path.splitext(file.name)[1]
 
-                # Remove the temporary file
-                os.remove(tmp_file.name)
+            # Create a temporary file and write the uploaded file content
+            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                tmp_file.write(file.read())
 
-                # Initialize OpenAI embeddings
-                embeddings = OpenAIEmbeddings(model='text-embedding-ada-002')
+            # Process the uploaded file based on its extension
+            if file_extension == ".pdf":
+                loader = PyPDFLoader(tmp_file.name)
+                pages = loader.load_and_split()
+            elif file_extension == ".txt":
+                loader = TextLoader(file_path=tmp_file.name, encoding="utf-8")
+                pages = loader.load_and_split()
 
-                # Append the pages to all_pages list
-                all_pages.extend(pages)
+            # Remove the temporary file
+            os.remove(tmp_file.name)
+
+            # Initialize OpenAI embeddings
+            embeddings = OpenAIEmbeddings(model='text-embedding-ada-002')
+
+            # Append the pages to all_pages list
+            all_pages.extend(pages)
 
             # Display the uploaded file content
-            file_container = st.expander(f"Click here to see your uploaded {uploaded_files.name} file:")
+            file_container = st.expander(f"Click here to see your uploaded {file.name} file:")
 
-            for i, pages in enumerate(all_pages):
-                file_container.subheader(f"Uploaded File {i+1}")
-                file_container.write(pages)
+            for i, page in enumerate(pages):
+                file_container.subheader(f"Page {i+1}")
+                file_container.write(page)
 
             # Display success message
             st.success("Document Loaded Successfully!")
