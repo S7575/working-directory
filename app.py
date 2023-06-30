@@ -108,11 +108,6 @@ def admin():
     st.write("Upload PDF/TXT Files:")
     uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], accept_multiple_files=True)
 
-    # Checkbox for the first time document upload
-    first_t = st.checkbox('Uploading Document First time.')
-
-    st.write("---")
-
     # Checkbox for subsequent document uploads
     second_t = st.checkbox('Uploading Document Second time and onwards...')
 
@@ -146,29 +141,7 @@ def admin():
             # Display success message
             st.success("Document Loaded Successfully!")
 
-            if first_t:
-                # All your previous code...
-                # Delete the existing index if it exists
-                if pinecone_index in pinecone.list_indexes():
-                    pinecone.delete_index(pinecone_index)
-                time.sleep(50)
-                st.info('Initializing Document Uploading to DB...')
-
-                # Create a new Pinecone index
-                pinecone.create_index(
-                        name=pinecone_index,
-                        metric='cosine',
-                        dimension=1536  # 1536 dim of text-embedding-ada-002
-                        )
-                time.sleep(50)
-
-                # Upload documents to the Pinecone index
-                vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
-                
-                # Display success message
-                st.success("Document Uploaded Successfully!")
-
-            elif second_t:
+    if second_t:
                 st.info('Initializing Document Uploading to DB...')
 
                 # Upload documents to the Pinecone index
