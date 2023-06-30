@@ -265,6 +265,10 @@ elif selected_function == "Chatbot":
     chat_pass = st.sidebar.text_input("Enter chat password: ", type="password")
     if chat_pass == "chatme":
         pinecone_index = "aichat"
+
+        # Initialize Pinecone with API key and environment
+        pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
+
         time.sleep(5)
         if pinecone_index in pinecone.list_indexes():
             index = pinecone.Index(pinecone_index)
