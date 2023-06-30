@@ -217,6 +217,8 @@ def chat():
 
     chat_namespace = get_namespace()
     db, retriever = initialize_db_and_retriever(chat_namespace)
+    time.sleep(5) # wait for 5 seconds for pinecone to answer
+
 
         # Define the conversational chat function
     def conversational_chat(query):
