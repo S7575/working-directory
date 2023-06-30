@@ -203,7 +203,7 @@ def chat():
         if chat_namespace not in options:
             chat_namespace = options[0]
 
-        with st.form(key="my_form"):
+        with st.form(key="namespace_form"):  # Unique key for the form
             chat_namespace = st.selectbox("Select a namespace", options, index=options.index(chat_namespace))
             submit_button = st.form_submit_button(label="Submit")
         
@@ -212,6 +212,7 @@ def chat():
             st.session_state['chat_namespace'] = chat_namespace
 
         return chat_namespace
+
 
     chat_namespace = get_namespace()
     db, retriever = initialize_db_and_retriever(chat_namespace)
