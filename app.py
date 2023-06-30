@@ -191,6 +191,7 @@ def chat():
         index_stats_response = index.describe_index_stats()
         options = list(index_stats_response['namespaces'].keys())
 
+        
         # Display the available documents in the index
         #st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
         # Define the options for the dropdown list
@@ -202,6 +203,8 @@ def chat():
 
         # Create a dropdown list for selecting the namespace
         chat_namespace = st.selectbox("Select a namespace", options, index=options.index(chat_namespace))
+
+        st.write("You selected:", chat_namespace)
 
         # Update the session state variable
         st.session_state['chat_namespace'] = chat_namespace
