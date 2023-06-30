@@ -186,6 +186,14 @@ def chat():
     embeddings = OpenAIEmbeddings(model = 'text-embedding-ada-002')
 
     time.sleep(10)
+
+    def initialize_db_and_retriever(namespace):
+        index = pinecone.Index(pinecone_index)
+        print(f"Initializing db and retriever with namespace: {namespace}")
+        db = Pinecone(index, embeddings.embed_query, text_field, namespace=namespace)
+        retriever = db.as_retriever(namespace=namespace)
+        return db, retriever
+
     if pinecone_index in pinecone.list_indexes():
         index = pinecone.Index(pinecone_index)
         index_stats_response = index.describe_index_stats()
@@ -209,10 +217,9 @@ def chat():
         # Update the session state variable
         st.session_state['chat_namespace'] = chat_namespace
 
-        # load a Pinecone index
-        index = pinecone.Index(pinecone_index)
-        db = Pinecone(index, embeddings.embed_query, text_field, namespace=chat_namespace)
-        retriever = db.as_retriever(namespace=chat_namespace)
+        # Initialize db and retriever with the selected namespace
+        db, retriever = initialize_db_and_retriever(chat_namespace)
+
 
         # Define the conversational chat function
         def conversational_chat(query):
