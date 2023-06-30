@@ -189,16 +189,18 @@ def chat():
     if pinecone_index in pinecone.list_indexes():
         index = pinecone.Index(pinecone_index)
         index_stats_response = index.describe_index_stats()
+        options = list(index_stats_response['namespaces'].keys())
+
         # Display the available documents in the index
         #st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
         # Define the options for the dropdown list
-        options = list(index_stats_response['namespaces'].keys())
-        chat_namespace = st.session_state.get('chat_namespace', None) # Get the current value of chat_namespace
+        
+        # Select the current namespace if it exists in the options
+        chat_namespace = st.session_state.get('chat_namespace', None) 
+        if chat_namespace not in options:
+            chat_namespace = options[0]
 
-        if not chat_namespace: # If chat_namespace is not set, set it to the first option
-         chat_namespace = options[0]
-
-        # Create a dropdown list
+        # Create a dropdown list for selecting the namespace
         chat_namespace = st.selectbox("Select a namespace", options, index=options.index(chat_namespace))
 
         # Update the session state variable
