@@ -194,35 +194,27 @@ def chat():
         retriever = db.as_retriever(namespace=namespace)
         return db, retriever
 
-    if pinecone_index in pinecone.list_indexes():
+    def get_namespace():
         index = pinecone.Index(pinecone_index)
         index_stats_response = index.describe_index_stats()
         options = list(index_stats_response['namespaces'].keys())
 
-        
-        # Display the available documents in the index
-        #st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
-        # Define the options for the dropdown list
-        
-        # Select the current namespace if it exists in the options
-        chat_namespace = st.session_state.get('chat_namespace', None) 
+        chat_namespace = st.session_state.get('chat_namespace', None)
         if chat_namespace not in options:
             chat_namespace = options[0]
 
-        # Create a dropdown list for selecting the namespace
         chat_namespace = st.selectbox("Select a namespace", options, index=options.index(chat_namespace))
 
         st.write("You selected:", chat_namespace)
-
-        # Update the session state variable
         st.session_state['chat_namespace'] = chat_namespace
 
-        # Initialize db and retriever with the selected namespace
-        db, retriever = initialize_db_and_retriever(chat_namespace)
+        return chat_namespace
 
+    chat_namespace = get_namespace()
+    db, retriever = initialize_db_and_retriever(chat_namespace)
 
         # Define the conversational chat function
-        def conversational_chat(query):
+    def conversational_chat(query):
             
             # chain_input = {"question": query}#, "chat_history": st.session_state["history"]}
             # result = chain(chain_input)
@@ -235,7 +227,7 @@ def chat():
             result = qa.run(input_documents=docs, question=query) #chain({"question": query, "chat_history": st.session_state['history']})
             st.session_state['history'].append((query, result))#["answer"]))
         
-            return result   #["answer"]
+            return result   #["answer"]    
 
     # Enable GPT-4 model selection
     mod = st.sidebar.checkbox('Access GPT-4')
