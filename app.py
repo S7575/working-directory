@@ -209,7 +209,7 @@ def chat():
     # load a Pinecone index
     index = pinecone.Index(pinecone_index)
     db = Pinecone(index, embeddings.embed_query, text_field, namespace=chat_namespace)
-    retriever = db.as_retriever()
+    retriever = db.as_retriever(namespace=chat_namespace)
     
     # Enable GPT-4 model selection
     mod = st.sidebar.checkbox('Access GPT-4')
@@ -253,9 +253,11 @@ def chat():
         
         # chain_input = {"question": query}#, "chat_history": st.session_state["history"]}
         # result = chain(chain_input)
+
         llm = ChatOpenAI(model=model_name)
         docs = db.similarity_search(query)
         qa = load_qa_chain(llm=llm, chain_type="stuff")
+
         # Run the query through the RetrievalQA model
         result = qa.run(input_documents=docs, question=query) #chain({"question": query, "chat_history": st.session_state['history']})
         st.session_state['history'].append((query, result))#["answer"]))
