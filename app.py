@@ -266,11 +266,11 @@ elif selected_function == "Chatbot":
     if chat_pass == "chatme":
         pinecone_index = "aichat"
         time.sleep(5)
-        
-        index = pinecone.Index(pinecone_index)
-        index_stats_response = index.describe_index_stats()
-        # Define the options for the dropdown list
-        options = list(index_stats_response['namespaces'].keys())
+        if pinecone_index in pinecone.list_indexes():
+            index = pinecone.Index(pinecone_index)
+            index_stats_response = index.describe_index_stats()
+            # Define the options for the dropdown list
+            options = list(index_stats_response['namespaces'].keys())
 
         pri_na = st.sidebar.checkbox("Access Private Namespaces")
         chat_namespace = None
@@ -297,11 +297,11 @@ elif selected_function == "Admin":
     pinecone_index = "aichat"
     # Check if the Pinecone index exists
     time.sleep(5)
-    
-    index = pinecone.Index(pinecone_index)
-    index_stats_response = index.describe_index_stats()
-    options = list(index_stats_response['namespaces'].keys())
-
+    if pinecone_index in pinecone.list_indexes():
+        index = pinecone.Index(pinecone_index)
+        index_stats_response = index.describe_index_stats()
+        options = list(index_stats_response['namespaces'].keys())
+        
     st.session_state.sel_namespace = ""
     # Display a text input box in the sidebar to enter the password
     passw = st.sidebar.text_input("Enter your password: ", type="password")
