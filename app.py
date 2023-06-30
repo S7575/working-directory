@@ -210,9 +210,10 @@ def chat():
         if submit_button:
             st.write("You selected:", chat_namespace)
             st.session_state['chat_namespace'] = chat_namespace
+            return chat_namespace  # Move the return statement here
 
+        # If the button is not pressed, return the initial chat_namespace
         return chat_namespace
-
 
     chat_namespace = get_namespace()
     db, retriever = initialize_db_and_retriever(chat_namespace)
