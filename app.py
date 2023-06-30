@@ -176,92 +176,15 @@ def admin():
 
 def chat():
     # Set the model name and Pinecone index name
-    model_name = "gpt-3.5-turbo-16k-0613" 
+    model_name = "gpt-3.5-turbo-16k-0613"
     pinecone_index = "aichat"
 
     # Set the text field for embeddings
     text_field = "text"
 
     # Create OpenAI embeddings
-    embeddings = OpenAIEmbeddings(model = 'text-embedding-ada-002')
+    embeddings = OpenAIEmbeddings(model='text-embedding-ada-002')
 
-    time.sleep(10)
-    if pinecone_index in pinecone.list_indexes():
-        index = pinecone.Index(pinecone_index)
-        index_stats_response = index.describe_index_stats()
-        options = list(index_stats_response['namespaces'].keys())
-
-        # Display the available documents in the index
-        #st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
-        # Define the options for the dropdown list
-        
-        # Select the current namespace if it exists in the options
-        chat_namespace = st.session_state.get('chat_namespace', None) 
-        if chat_namespace not in options:
-            chat_namespace = options[0]
-
-        # Create a dropdown list for selecting the namespace
-        chat_namespace = st.selectbox("Select a namespace", options, index=options.index(chat_namespace))
-
-        # Update the session state variable
-        st.session_state['chat_namespace'] = chat_namespace
-
-    # load a Pinecone index
-    index = pinecone.Index(pinecone_index)
-    db = Pinecone(index, embeddings.embed_query, text_field, namespace=chat_namespace)
-    retriever = db.as_retriever()
-    
-    # Enable GPT-4 model selection
-    mod = st.sidebar.checkbox('Access GPT-4')
-    if mod:
-        pas = st.sidebar.text_input("Write access code", type="password")
-        if pas == "ongpt":
-            MODEL_OPTIONS = ["gpt-3.5-turbo-16k-0613", "gpt-4"]
-            model_name = st.sidebar.selectbox(label="Select Model", options=MODEL_OPTIONS)
-
-    
-    # Create ChatOpenAI model and RetrievalQA
-    # llm = ChatOpenAI(model=model_name) # 'gpt-3.5-turbo',
-    # qa = RetrievalQA.from_chain_type(llm=llm,
-    #                                  chain_type="stuff", 
-    #                                  retriever=retriever, 
-    #                                  verbose=True)
-    
-    # Define the prompt form
-    def prompt_form():
-            """
-            Displays the prompt form
-            """
-            with st.form(key="my_form", clear_on_submit=True):
-                # User input
-                user_input = st.text_area(
-                    "Query:",
-                    placeholder="Ask me your queries...",
-                    key="input_",
-                    label_visibility="collapsed",
-                )
-
-                # Submit button
-                submit_button = st.form_submit_button(label="Send")
-                
-                # Check if the form is ready
-                is_ready = submit_button and user_input
-            return is_ready, user_input
-    
-    # Define the conversational chat function
-    def conversational_chat(query):
-        
-        # chain_input = {"question": query}#, "chat_history": st.session_state["history"]}
-        # result = chain(chain_input)
-        llm = ChatOpenAI(model=model_name)
-        docs = db.similarity_search(query)
-        qa = load_qa_chain(llm=llm, chain_type="stuff")
-        # Run the query through the RetrievalQA model
-        result = qa.run(input_documents=docs, question=query) #chain({"question": query, "chat_history": st.session_state['history']})
-        st.session_state['history'].append((query, result))#["answer"]))
-    
-        return result   #["answer"]
-    
     # Initialize session state variables
     if 'history' not in st.session_state:
         st.session_state['history'] = []
@@ -271,27 +194,97 @@ def chat():
 
     if 'past' not in st.session_state:
         st.session_state['past'] = ["Hey ! 👋"]
-    
-    
 
-    # Prompt form input and chat processing
-    is_ready, user_input = prompt_form()
-    if is_ready:
-        output = conversational_chat(user_input)
-        st.session_state['past'].append(user_input)
-        st.session_state['generated'].append(output)
-    # Reset chat button
-    res = st.button("Reset Chat")
-    # Display chat messages
-    if st.session_state['generated']:
-        for i in range(len(st.session_state['generated'])-1, -1, -1):
-            message(st.session_state["generated"][i], key=str(i), avatar_style="thumbs")
-            message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="big-smile",)
-    
-    # Reset chat session state
-    if res:
-        st.session_state['generated'] = []
-        st.session_state['past'] = []
+    while True:
+        with st.spinner("Loading..."):
+            time.sleep(1)
+            if pinecone_index in pinecone.list_indexes():
+                index = pinecone.Index(pinecone_index)
+                index_stats_response = index.describe_index_stats()
+                options = list(index_stats_response['namespaces'].keys())
+
+                # Display the available documents in the index
+                # st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
+                # Define the options for the dropdown list
+
+                # Select the current namespace if it exists in the options
+                chat_namespace = st.session_state.get('chat_namespace', None)
+                if chat_namespace not in options:
+                    chat_namespace = options[0]
+
+                # Create a dropdown list for selecting the namespace
+                chat_namespace = st.selectbox("Select a namespace", options, index=options.index(chat_namespace))
+
+                # Update the session state variable
+                st.session_state['chat_namespace'] = chat_namespace
+
+            # Load a Pinecone index
+            index = pinecone.Index(pinecone_index)
+            db = Pinecone(index, embeddings.embed_query, text_field, namespace=chat_namespace)
+            retriever = db.as_retriever()
+
+            # Enable GPT-4 model selection
+            mod = st.sidebar.checkbox('Access GPT-4')
+            if mod:
+                pas = st.sidebar.text_input("Write access code", type="password")
+                if pas == "ongpt":
+                    MODEL_OPTIONS = ["gpt-3.5-turbo-16k-0613", "gpt-4"]
+                    model_name = st.sidebar.selectbox(label="Select Model", options=MODEL_OPTIONS)
+
+            # Define the prompt form
+            def prompt_form():
+                """
+                Displays the prompt form
+                """
+                with st.form(key="my_form", clear_on_submit=True):
+                    # User input
+                    user_input = st.text_area(
+                        "Query:",
+                        placeholder="Ask me your queries...",
+                        key="input_",
+                        label_visibility="collapsed",
+                    )
+
+                    # Submit button
+                    submit_button = st.form_submit_button(label="Send")
+
+                    # Check if the form is ready
+                    is_ready = submit_button and user_input
+                return is_ready, user_input
+
+            # Define the conversational chat function
+            def conversational_chat(query):
+                llm = ChatOpenAI(model=model_name)
+                docs = db.similarity_search(query)
+                qa = load_qa_chain(llm=llm, chain_type="stuff")
+                result = qa.run(input_documents=docs, question=query)
+                st.session_state['history'].append((query, result))
+
+                return result
+
+            # Prompt form input and chat processing
+            is_ready, user_input = prompt_form()
+            if is_ready:
+                output = conversational_chat(user_input)
+                st.session_state['past'].append(user_input)
+                st.session_state['generated'].append(output)
+
+            # Reset chat button
+            res = st.button("Reset Chat")
+
+            # Display chat messages
+            if st.session_state['generated']:
+                for i in range(len(st.session_state['generated']) - 1, -1, -1):
+                    message(st.session_state["generated"][i], key=str(i), avatar_style="thumbs")
+                    message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="big-smile",)
+
+            # Reset chat session state
+            if res:
+                st.session_state['generated'] = []
+                st.session_state['past'] = []
+
+# Call the chat function
+chat()
 
 
 # List of available functions: Home, Chatbot, Admin
