@@ -104,76 +104,78 @@ def admin():
     if new_name:
         selected_namespace = st.text_input("Enter Namespace Name: ")
 
-    # Prompt the user to upload PDF/TXT files
+# Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
-    uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], label_visibility="collapsed")#, accept_multiple_files = True
-    
-    if uploaded_files is not None:
-        # Extract the file extension
-        file_extension =  os.path.splitext(uploaded_files.name)[1]
+    uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], accept_multiple_files=True)
 
-        # Create a temporary file and write the uploaded file content
-        with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
-            tmp_file.write(uploaded_files.read())
-        
-        # Process the uploaded file based on its extension
-        if file_extension == ".pdf":
-            loader = PyPDFLoader(tmp_file.name)
-            pages = loader.load_and_split()
-        elif file_extension == ".txt":
-            loader = TextLoader(file_path=tmp_file.name, encoding="utf-8")
-            pages = loader.load_and_split()
+    # Checkbox for the first time document upload
+    first_t = st.checkbox('Uploading Document First time.')
 
-        # Remove the temporary file
-        os.remove(tmp_file.name)
+    st.write("---")
 
-        # Initialize OpenAI embeddings
-        embeddings = OpenAIEmbeddings(model = 'text-embedding-ada-002')
+    # Checkbox for subsequent document uploads
+    second_t = st.checkbox('Uploading Document Second time and onwards...')
 
-        # Display the uploaded file content
-        file_container = st.expander(f"Click here to see your uploaded {uploaded_files.name} file:")
-        file_container.write(pages)
+    if uploaded_files:
+        for uploaded_file in uploaded_files:
+            # Extract the file extension
+            file_extension = os.path.splitext(uploaded_file.name)[1]
 
-        # Display success message
-        st.success("Document Loaded Successfully!")
+            # Create a temporary file and write the uploaded file content
+            with tempfile.NamedTemporaryFile(delete=False) as tmp_file:
+                tmp_file.write(uploaded_file.read())
 
-        # Checkbox for the first time document upload
-        first_t = st.checkbox('Uploading Document First time.')
+            # Process the uploaded file based on its extension
+            if file_extension == ".pdf":
+                loader = PyPDFLoader(tmp_file.name)
+                pages = loader.load_and_split()
+            elif file_extension == ".txt":
+                loader = TextLoader(file_path=tmp_file.name, encoding="utf-8")
+                pages = loader.load_and_split()
 
-        st.write("---")
+            # Remove the temporary file
+            os.remove(tmp_file.name)
 
-        # Checkbox for subsequent document uploads
-        second_t = st.checkbox('Uploading Document Second time and onwards...')
+            # Initialize OpenAI embeddings
+            embeddings = OpenAIEmbeddings(model='text-embedding-ada-002')
 
-        if first_t:
-            # Delete the existing index if it exists
-            if pinecone_index in pinecone.list_indexes():
-                pinecone.delete_index(pinecone_index)
-            time.sleep(50)
-            st.info('Initializing Document Uploading to DB...')
+            # Display the uploaded file content
+            file_container = st.expander(f"Click here to see your uploaded {uploaded_file.name} file:")
+            file_container.write(pages)
 
-            # Create a new Pinecone index
-            pinecone.create_index(
-                    name=pinecone_index,
-                    metric='cosine',
-                    dimension=1536  # 1536 dim of text-embedding-ada-002
-                    )
-            time.sleep(50)
-
-            # Upload documents to the Pinecone index
-            vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
-            
             # Display success message
-            st.success("Document Uploaded Successfully!")
-        
-        elif second_t:
-            st.info('Initializing Document Uploading to DB...')
+            st.success("Document Loaded Successfully!")
 
-            # Upload documents to the Pinecone index
-            vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
-            
-            # Display success message
-            st.success("Document Uploaded Successfully!")
+            if first_t:
+                # All your previous code...
+                # Delete the existing index if it exists
+                if pinecone_index in pinecone.list_indexes():
+                    pinecone.delete_index(pinecone_index)
+                time.sleep(50)
+                st.info('Initializing Document Uploading to DB...')
+
+                # Create a new Pinecone index
+                pinecone.create_index(
+                        name=pinecone_index,
+                        metric='cosine',
+                        dimension=1536  # 1536 dim of text-embedding-ada-002
+                        )
+                time.sleep(50)
+
+                # Upload documents to the Pinecone index
+                vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
+                
+                # Display success message
+                st.success("Document Uploaded Successfully!")
+
+            elif second_t:
+                st.info('Initializing Document Uploading to DB...')
+
+                # Upload documents to the Pinecone index
+                vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
+                
+                # Display success message
+                st.success("Document Uploaded Successfully!")
 
 
 def chat():
