@@ -213,7 +213,23 @@ def chat():
         index = pinecone.Index(pinecone_index)
         db = Pinecone(index, embeddings.embed_query, text_field, namespace=chat_namespace)
         retriever = db.as_retriever(namespace=chat_namespace)
-    
+
+        # Define the conversational chat function
+        def conversational_chat(query):
+            
+            # chain_input = {"question": query}#, "chat_history": st.session_state["history"]}
+            # result = chain(chain_input)
+
+            llm = ChatOpenAI(model=model_name)
+            docs = db.similarity_search(query)
+            qa = load_qa_chain(llm=llm, chain_type="stuff")
+
+            # Run the query through the RetrievalQA model
+            result = qa.run(input_documents=docs, question=query) #chain({"question": query, "chat_history": st.session_state['history']})
+            st.session_state['history'].append((query, result))#["answer"]))
+        
+            return result   #["answer"]
+
     # Enable GPT-4 model selection
     mod = st.sidebar.checkbox('Access GPT-4')
     if mod:
@@ -251,22 +267,7 @@ def chat():
                 is_ready = submit_button and user_input
             return is_ready, user_input
     
-    # Define the conversational chat function
-    def conversational_chat(query):
         
-        # chain_input = {"question": query}#, "chat_history": st.session_state["history"]}
-        # result = chain(chain_input)
-
-        llm = ChatOpenAI(model=model_name)
-        docs = db.similarity_search(query)
-        qa = load_qa_chain(llm=llm, chain_type="stuff")
-
-        # Run the query through the RetrievalQA model
-        result = qa.run(input_documents=docs, question=query) #chain({"question": query, "chat_history": st.session_state['history']})
-        st.session_state['history'].append((query, result))#["answer"]))
-    
-        return result   #["answer"]
-    
     # Initialize session state variables
     if 'history' not in st.session_state:
         st.session_state['history'] = []
