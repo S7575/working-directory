@@ -189,7 +189,7 @@ def chat():
 
     def initialize_db_and_retriever(namespace):
         index = pinecone.Index(pinecone_index)
-        print(f"Initializing db and retriever with namespace: {namespace}")
+        st.write(f"Initializing db and retriever with namespace: {namespace}")
         db = Pinecone(index, embeddings.embed_query, text_field, namespace=namespace)
         retriever = db.as_retriever(namespace=namespace)
         return db, retriever
