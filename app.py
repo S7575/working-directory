@@ -141,14 +141,14 @@ def admin():
             # Display success message
             st.success("Document Loaded Successfully!")
 
-    if second_t:
-        st.info('Initializing Document Uploading to DB...')
+            if second_t:
+                st.info('Initializing Document Uploading to DB...')
 
-         # Upload documents to the Pinecone index
-        vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
-                
-        # Display success message
-        st.success("Document Uploaded Successfully!")
+                # Upload documents to the Pinecone index
+                vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
+                        
+                # Display success message
+                st.success("Document Uploaded Successfully!")
 
 
 def chat():
