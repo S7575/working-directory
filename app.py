@@ -193,10 +193,16 @@ def chat():
         #st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
         # Define the options for the dropdown list
         options = list(index_stats_response['namespaces'].keys())
-        
-        # Create a dropdown list
-        chat_namespace = st.selectbox("Select a namespace", options)
+        chat_namespace = st.session_state.get('chat_namespace', None) # Get the current value of chat_namespace
 
+        if not chat_namespace: # If chat_namespace is not set, set it to the first option
+         chat_namespace = options[0]
+
+        # Create a dropdown list
+        chat_namespace = st.selectbox("Select a namespace", options, index=options.index(chat_namespace))
+
+        # Update the session state variable
+        st.session_state['chat_namespace'] = chat_namespace
 
     # load a Pinecone index
     index = pinecone.Index(pinecone_index)
