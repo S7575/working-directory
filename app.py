@@ -224,12 +224,12 @@ def chat():
             retriever = db.as_retriever()
 
             # Enable GPT-4 model selection
-            mod = st.sidebar.checkbox('Access GPT-4')
-            if mod:
-                pas = st.sidebar.text_input("Write access code", type="password")
-                if pas == "ongpt":
-                    MODEL_OPTIONS = ["gpt-3.5-turbo-16k-0613", "gpt-4"]
-                    model_name = st.sidebar.selectbox(label="Select Model", options=MODEL_OPTIONS)
+            #mod = st.sidebar.checkbox('Access GPT-4')
+            #if mod:
+             #   pas = st.sidebar.text_input("Write access code", type="password")
+             #   if pas == "ongpt":
+              #      MODEL_OPTIONS = ["gpt-3.5-turbo-16k-0613", "gpt-4"]
+               #     model_name = st.sidebar.selectbox(label="Select Model", options=MODEL_OPTIONS)
 
             # Define the prompt form
             def prompt_form():
