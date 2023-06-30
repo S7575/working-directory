@@ -209,10 +209,10 @@ def chat():
         # Update the session state variable
         st.session_state['chat_namespace'] = chat_namespace
 
-    # load a Pinecone index
-    index = pinecone.Index(pinecone_index)
-    db = Pinecone(index, embeddings.embed_query, text_field, namespace=chat_namespace)
-    retriever = db.as_retriever(namespace=chat_namespace)
+        # load a Pinecone index
+        index = pinecone.Index(pinecone_index)
+        db = Pinecone(index, embeddings.embed_query, text_field, namespace=chat_namespace)
+        retriever = db.as_retriever(namespace=chat_namespace)
     
     # Enable GPT-4 model selection
     mod = st.sidebar.checkbox('Access GPT-4')
