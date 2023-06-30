@@ -82,8 +82,10 @@ def admin():
             # Create a dropdown list
             selected_namespace = st.selectbox("Select a namespace", options)
             st.warning("Use 'Uploading Document Second time and onwards...' button to upload docs in existing namespace!", icon="⚠️")
+
             # Display the selected value
             st.write("You selected:", selected_namespace)
+
     if del_name:
         if pinecone_index in pinecone.list_indexes():
             index = pinecone.Index(pinecone_index)
@@ -187,13 +189,6 @@ def chat():
 
     time.sleep(10)
 
-    def initialize_db_and_retriever(namespace):
-        index = pinecone.Index(pinecone_index)
-        st.write(f"Initializing db and retriever with namespace: {namespace}")
-        db = Pinecone(index, embeddings.embed_query, text_field, namespace=namespace)
-        retriever = db.as_retriever(namespace=namespace)
-        return db, retriever
-
     def get_namespace():
         index = pinecone.Index(pinecone_index)
         index_stats_response = index.describe_index_stats()
@@ -214,6 +209,13 @@ def chat():
 
         # If the button is not pressed, return the initial chat_namespace
         return chat_namespace
+
+    def initialize_db_and_retriever(namespace):
+        index = pinecone.Index(pinecone_index)
+        st.write(f"Initializing db and retriever with namespace: {namespace}")
+        db = Pinecone(index, embeddings.embed_query, text_field, namespace=namespace)
+        retriever = db.as_retriever(namespace=namespace)
+        return db, retriever
 
     chat_namespace = get_namespace()
     db, retriever = initialize_db_and_retriever(chat_namespace)
