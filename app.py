@@ -198,15 +198,18 @@ def chat():
         index = pinecone.Index(pinecone_index)
         index_stats_response = index.describe_index_stats()
         options = list(index_stats_response['namespaces'].keys())
-
         chat_namespace = st.session_state.get('chat_namespace', None)
+
         if chat_namespace not in options:
             chat_namespace = options[0]
 
-        chat_namespace = st.selectbox("Select a namespace", options, index=options.index(chat_namespace))
-
-        st.write("You selected:", chat_namespace)
-        st.session_state['chat_namespace'] = chat_namespace
+        with st.form(key="my_form"):
+            chat_namespace = st.selectbox("Select a namespace", options, index=options.index(chat_namespace))
+            submit_button = st.form_submit_button(label="Submit")
+        
+        if submit_button:
+            st.write("You selected:", chat_namespace)
+            st.session_state['chat_namespace'] = chat_namespace
 
         return chat_namespace
 
