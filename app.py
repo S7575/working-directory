@@ -106,7 +106,7 @@ def admin():
 
 # Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
-    uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], accept_multiple_files=True)
+    uploaded_files = st.file_uploader("Upload", type=["pdf", "txt", "PDF"], accept_multiple_files=True)
 
     # Checkbox for subsequent document uploads
     second_t = st.checkbox('Uploading Document Second time and onwards...')
@@ -142,13 +142,13 @@ def admin():
             st.success("Document Loaded Successfully!")
 
     if second_t:
-                st.info('Initializing Document Uploading to DB...')
+        st.info('Initializing Document Uploading to DB...')
 
-                # Upload documents to the Pinecone index
-                vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
+         # Upload documents to the Pinecone index
+        vector_store = Pinecone.from_documents(pages, embeddings, index_name=pinecone_index, namespace= selected_namespace)
                 
-                # Display success message
-                st.success("Document Uploaded Successfully!")
+        # Display success message
+        st.success("Document Uploaded Successfully!")
 
 
 def chat():
