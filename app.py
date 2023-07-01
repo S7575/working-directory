@@ -233,6 +233,11 @@ def chat(chat_na):
 
     # Reset chat button
     res = st.button("Reset Chat")
+    
+    # Reset chat session state
+    if res:
+        st.session_state['generated'] = []
+        st.session_state['past'] = []
 
     # Display chat messages
     if st.session_state['generated']:
