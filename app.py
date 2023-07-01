@@ -222,7 +222,7 @@ def chat(chat_na):
         st.session_state['past'] = ["Hey ! 👋"]
     
     
-    st.write(f"Selected Namespace Name: {chat_na}")
+    # st.write(f"Selected Namespace Name: {chat_na}")
 
     # Prompt form input and chat processing
     is_ready, user_input = prompt_form()
@@ -286,19 +286,40 @@ elif selected_function == "Chatbot":
         if pri_na:
             pri_pass = st.sidebar.text_input("Write access code:", type="password")
             if pri_pass == "myns":
-                chat_namespace = st.sidebar.selectbox("All Namespaces", options)
+                st.sidebar.write("Namespaces:👇")
+                st.sidebar.write(options)
+
+                # Create a dropdown list
+                chat_namespace = st.sidebar.text_input("Enter Namespace Name: ")
                 st.session_state.chat_namesp = chat_namespace
             else:
                 st.info("Enter the correct access code to use private namespaces!")
         else:
             # Filter the options to exclude strings ending with ".sec"
             filtered_list = [string for string in options if not string.endswith(".sec")]
-            
-            # Create a dropdown list
-            chat_namespace = st.sidebar.selectbox("Select a namespace", filtered_list)
+            st.sidebar.write("Namespaces:👇")
+            st.sidebar.write(filtered_list)
+            chat_namespace = st.sidebar.text_input("Enter Namespace Name: ")
             st.session_state.chat_namesp = chat_namespace
 
         chat_na = st.session_state.chat_namesp
+        st.write(f"Selected Namespace Name: {chat_na}")
+        # Define a dictionary with namespaces and their corresponding messages
+        option_messages = {
+            "test-1": "This is the message for test-1",
+            "test-2": "This is the message for test-2",
+            "test-3.sec": "This is the message for test-3.sec"
+        }
+        selected_option = list(option_messages.keys())
+        # Check if the selected option is present in the dictionary
+        if chat_na in selected_option:
+            # Get the corresponding message for the selected option
+            message_ = option_messages[chat_na]
+            # Display the message
+            st.write("Message:", message_)
+        else:
+            # If the selected option is not found in the dictionary, display a default message
+            st.write("No message found for the selected option")
         chat(chat_na)
 
 elif selected_function == "Admin":
