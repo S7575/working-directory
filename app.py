@@ -97,7 +97,7 @@ def admin(sel_ns):
     
     if uploaded_files is not None:
         documents = load_docs(uploaded_files)
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=2500, chunk_overlap=0)
         docs = text_splitter.create_documents(documents)
 
         # Initialize OpenAI embeddings
