@@ -276,7 +276,7 @@ elif selected_function == "Chatbot":
         # Initialize Pinecone with API key and environment
         pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
 
-        time.sleep(5)
+        time.sleep(2)
         if pinecone_index in pinecone.list_indexes():
             index = pinecone.Index(pinecone_index)
             index_stats_response = index.describe_index_stats()
@@ -334,7 +334,7 @@ elif selected_function == "Admin":
     pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
 
     # Check if the Pinecone index exists
-    time.sleep(5)
+    time.sleep(2)
     if pinecone_index in pinecone.list_indexes():
         index = pinecone.Index(pinecone_index)
         index_stats_response = index.describe_index_stats()
