@@ -37,6 +37,8 @@ os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
 PINECONE_ENV = st.secrets.secrets.PINECONE_ENV
 os.environ["PINECONE_ENV"] = PINECONE_ENV
 
+# Initialize Pinecone with API key and environment
+pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
 
 # Defining the main function
 def main():
@@ -71,34 +73,33 @@ def load_docs(files):
             for page in pdf_reader.pages:
                 text += page.extract_text()
             all_text.append(text)
+        elif file_extension == ".txt":
+            stringio = StringIO(file_path.getvalue().decode("utf-8"))
+            text = stringio.read()
+            all_text.append(text)
         elif file_extension == ".PDF":
             pdf_reader = PyPDF2.PdfReader(file_path)
             text = ""
             for page in pdf_reader.pages:
                 text += page.extract_text()
             all_text.append(text)
-        elif file_extension == ".txt":
-            stringio = StringIO(file_path.getvalue().decode("utf-8"))
-            text = stringio.read()
-            all_text.append(text)
         else:
             st.warning('Please provide txt or pdf.', icon="⚠️")
     return all_text  
-
 def admin(sel_ns):
     # Set the Pinecone index name
     pinecone_index = "aichat"
 
-    # Initialize Pinecone with API key and environment
-    pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
+    # # Initialize Pinecone with API key and environment
+    # pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
 
     # Prompt the user to upload PDF/TXT files
     st.write("Upload PDF/TXT Files:")
-    uploaded_files = st.file_uploader("Upload", type=["pdf", "txt", "PDF"], label_visibility="collapsed", accept_multiple_files = True)
+    uploaded_files = st.file_uploader("Upload", type=["pdf", "txt"], label_visibility="collapsed", accept_multiple_files = True)
     
     if uploaded_files is not None:
         documents = load_docs(uploaded_files)
-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=0)
+        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
         docs = text_splitter.create_documents(documents)
 
         # Initialize OpenAI embeddings
@@ -111,35 +112,36 @@ def admin(sel_ns):
         # Display success message
         st.success("Document Loaded Successfully!")
 
-       # Checkbox for the first time document upload
+        # Checkbox for the first time document upload
         first_t = st.checkbox('Uploading Document First time.')
+
         st.write("---")
 
         # Checkbox for subsequent document uploads
         second_t = st.checkbox('Uploading Document Second time and onwards...')
 
         if first_t:
-             #Delete the existing index if it exists
-             if pinecone_index in pinecone.list_indexes():
-               pinecone.delete_index(pinecone_index)
-             time.sleep(50)
-             st.info('Initializing Document Uploading to DB...')
+            # Delete the existing index if it exists
+            if pinecone_index in pinecone.list_indexes():
+                pinecone.delete_index(pinecone_index)
+            time.sleep(50)
+            st.info('Initializing Document Uploading to DB...')
 
-        # Create a new Pinecone index
-        pinecone.create_index(
-                 name=pinecone_index,
-                  metric='cosine',
-                  dimension=1536  # 1536 dim of text-embedding-ada-002
-                  )
-        time.sleep(80)
+            # Create a new Pinecone index
+            pinecone.create_index(
+                    name=pinecone_index,
+                    metric='cosine',
+                    dimension=1536  # 1536 dim of text-embedding-ada-002
+                    )
+            time.sleep(80)
 
             # Upload documents to the Pinecone index
-        vector_store = Pinecone.from_documents(docs, embeddings, index_name=pinecone_index, namespace= sel_ns)
+            vector_store = Pinecone.from_documents(docs, embeddings, index_name=pinecone_index, namespace= sel_ns)
             
             # Display success message
-        st.success("Document Uploaded Successfully!")
+            st.success("Document Uploaded Successfully!")
         
-        if second_t:
+        elif second_t:
             st.info('Initializing Document Uploading to DB...')
 
             # Upload documents to the Pinecone index
@@ -152,7 +154,7 @@ def admin(sel_ns):
 
 def chat(chat_na):
     # Set the model name and Pinecone index name
-    model_name = "gpt-3.5-turbo-16k-0613" 
+    model_name = "gpt-3.5-turbo" 
     pinecone_index = "aichat"
 
     # Set the text field for embeddings
@@ -161,6 +163,7 @@ def chat(chat_na):
     # Create OpenAI embeddings
     embeddings = OpenAIEmbeddings(model = 'text-embedding-ada-002')
 
+    
     # load a Pinecone index
     index = pinecone.Index(pinecone_index)
     db = Pinecone(index, embeddings.embed_query, text_field, namespace=chat_na)
@@ -171,10 +174,17 @@ def chat(chat_na):
     if mod:
         pas = st.sidebar.text_input("Write access code", type="password")
         if pas == "ongpt":
-            MODEL_OPTIONS = ["gpt-3.5-turbo-16k-0613", "gpt-4", "gpt-4-32k"]
+            MODEL_OPTIONS = ["gpt-3.5-turbo", "gpt-4"]
             model_name = st.sidebar.selectbox(label="Select Model", options=MODEL_OPTIONS)
 
-       
+    
+    # Create ChatOpenAI model and RetrievalQA
+    # llm = ChatOpenAI(model=model_name) # 'gpt-3.5-turbo',
+    # qa = RetrievalQA.from_chain_type(llm=llm,
+    #                                  chain_type="stuff", 
+    #                                  retriever=retriever, 
+    #                                  verbose=True)
+    
     # Define the prompt form
     def prompt_form():
             """
@@ -201,8 +211,6 @@ def chat(chat_na):
         
         # chain_input = {"question": query}#, "chat_history": st.session_state["history"]}
         # result = chain(chain_input)
-
- # Create ChatOpenAI model and RetrievalQA
         llm = ChatOpenAI(model=model_name)
         docs = db.similarity_search(query)
         qa = load_qa_chain(llm=llm, chain_type="stuff")
@@ -224,33 +232,25 @@ def chat(chat_na):
     
     
     # st.write(f"Selected Namespace Name: {chat_na}")
-
     # Prompt form input and chat processing
     is_ready, user_input = prompt_form()
     if is_ready:
         output = conversational_chat(user_input)
         st.session_state['past'].append(user_input)
         st.session_state['generated'].append(output)
-
     # Reset chat button
     res = st.button("Reset Chat")
-    
     # Reset chat session state
     if res:
         st.session_state['generated'] = []
         st.session_state['past'] = []
-
     # Display chat messages
     if st.session_state['generated']:
         for i in range(len(st.session_state['generated'])-1, -1, -1):
             message(st.session_state["generated"][i], key=str(i), avatar_style="thumbs")
             message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style="big-smile",)
     
-    # Reset chat session state
-    if res:
-        st.session_state['generated'] = []
-        st.session_state['past'] = []
-
+    
 
 # List of available functions: Home, Chatbot, Admin
 functions = [
@@ -266,22 +266,16 @@ selected_function = st.sidebar.selectbox("Select Option", functions)
 # Call the main() function if "Home" is selected
 if selected_function == "Home":
     main()
-
 # Call the chat() function if "Chatbot" is selected
 elif selected_function == "Chatbot":
     st.session_state.chat_namesp = ""
     chat_pass = st.sidebar.text_input("Enter chat password: ", type="password")
     if chat_pass == "chatme":
         pinecone_index = "aichat"
-
-        # Initialize Pinecone with API key and environment
-        pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
-
-        time.sleep(2)
+        time.sleep(5)
         if pinecone_index in pinecone.list_indexes():
             index = pinecone.Index(pinecone_index)
             index_stats_response = index.describe_index_stats()
-
             # Define the options for the dropdown list
             options = list(index_stats_response['namespaces'].keys())
 
@@ -294,7 +288,6 @@ elif selected_function == "Chatbot":
             if pri_pass == "myns":
                 st.sidebar.write("Namespaces:👇")
                 st.sidebar.write(options)
-
                 # Create a dropdown list
                 chat_namespace = st.sidebar.text_input("Enter Namespace Name: ")
                 st.session_state.chat_namesp = chat_namespace
@@ -327,28 +320,22 @@ elif selected_function == "Chatbot":
             # If the selected option is not found in the dictionary, display a default message
             st.write("No message found for the selected option")
         chat(chat_na)
-
 elif selected_function == "Admin":
     pinecone_index = "aichat"
-
-    # Initialize Pinecone with API key and environment
-    pinecone.init(api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
-
     # Check if the Pinecone index exists
-    time.sleep(2)
+    time.sleep(5)
     if pinecone_index in pinecone.list_indexes():
         index = pinecone.Index(pinecone_index)
         index_stats_response = index.describe_index_stats()
+        # Display the available documents in the index
+        #st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
+        # Define the options for the dropdown list
         options = list(index_stats_response['namespaces'].keys())
-        
     st.session_state.sel_namespace = ""
-
     # Display a text input box in the sidebar to enter the password
     passw = st.sidebar.text_input("Enter your password: ", type="password")
-
     # Call the admin() function if the correct password is entered
     if passw == "ai4chat":
-
         #namespa = st.text_input("Enter Namespace Name: ")
         exist_name = st.checkbox('Use Existing Namespace to Upload Docs')
         del_name = st.checkbox("Delete a Namespace")
@@ -357,27 +344,22 @@ elif selected_function == "Admin":
             st.write("---")
             st.write("Existing Namespaces:👇")
             st.write(options)
-
             # Create a dropdown list
             selected_namespace = st.text_input("Enter Existing Namespace Name: ") #st.sidebar.selectbox("Select a namespace", options)
             st.session_state.sel_namespace = selected_namespace
             st.warning("Use 'Uploading Document Second time and onwards...' button to upload docs in existing namespace!", icon="⚠️")
             #selected_namespace = selected_namespace
-
             # Display the selected value
             st.write("You selected:", st.session_state.sel_namespace)
-
         if del_name:
             st.write("---")
             st.write("Existing Namespaces:👇")
             st.write(options)
-
             # Create a dropdown list
             selected_namespace = st.text_input("Enter Existing Namespace Name: ") #st.sidebar.selectbox("Select a namespace", options)
             st.session_state.sel_namespace = selected_namespace
             st.warning("The namespace will be permanently deleted!", icon="⚠️")
             del_ = st.checkbox("Check this to delete Namespace")
-
             if del_:
                 with st.spinner('Deleting Namespace...'):
                     time.sleep(5)
