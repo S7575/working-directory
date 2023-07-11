@@ -84,6 +84,7 @@ def load_docs(files):
         else:
             st.warning('Please provide txt or pdf.', icon="⚠️")
     return all_text  
+
 def admin(sel_ns):
     # Set the Pinecone index name
     pinecone_index = "aichat"
@@ -110,33 +111,33 @@ def admin(sel_ns):
         # Display success message
         st.success("Document Loaded Successfully!")
 
-        # Checkbox for the first time document upload
-        #first_t = st.checkbox('Uploading Document First time.')
-        #st.write("---")
+       # Checkbox for the first time document upload
+        first_t = st.checkbox('Uploading Document First time.')
+        st.write("---")
 
         # Checkbox for subsequent document uploads
         second_t = st.checkbox('Uploading Document Second time and onwards...')
 
-       # if first_t:
-            # Delete the existing index if it exists
-         #   if pinecone_index in pinecone.list_indexes():
-         #       pinecone.delete_index(pinecone_index)
-          #  time.sleep(50)
-          #  st.info('Initializing Document Uploading to DB...')
+        if first_t:
+             #Delete the existing index if it exists
+             if pinecone_index in pinecone.list_indexes():
+               pinecone.delete_index(pinecone_index)
+             time.sleep(50)
+             st.info('Initializing Document Uploading to DB...')
 
         # Create a new Pinecone index
-        #  pinecone.create_index(
-        #         name=pinecone_index,
-        #          metric='cosine',
-        #          dimension=1536  # 1536 dim of text-embedding-ada-002
-        #          )
-        #  time.sleep(80)
+        pinecone.create_index(
+                 name=pinecone_index,
+                  metric='cosine',
+                  dimension=1536  # 1536 dim of text-embedding-ada-002
+                  )
+        time.sleep(80)
 
             # Upload documents to the Pinecone index
-        #    vector_store = Pinecone.from_documents(docs, embeddings, index_name=pinecone_index, namespace= sel_ns)
+        vector_store = Pinecone.from_documents(docs, embeddings, index_name=pinecone_index, namespace= sel_ns)
             
             # Display success message
-        #    st.success("Document Uploaded Successfully!")
+        st.success("Document Uploaded Successfully!")
         
         if second_t:
             st.info('Initializing Document Uploading to DB...')
