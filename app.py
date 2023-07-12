@@ -73,6 +73,12 @@ def load_docs(files):
             for page in pdf_reader.pages:
                 text += page.extract_text()
             all_text.append(text)
+        elif file_extension == ".PDF":
+            pdf_reader = PyPDF2.PdfReader(file_path)
+            text = ""
+            for page in pdf_reader.pages:
+                text += page.extract_text()
+            all_text.append(text)
         elif file_extension == ".txt":
             stringio = StringIO(file_path.getvalue().decode("utf-8"))
             text = stringio.read()
