@@ -17,7 +17,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.vectorstores import Pinecone
 import PyPDF2
 from io import StringIO
-import pinecone 
+from pinecone_client  import pinecone
 
 # Setting up logging configuration
 logger = logging.getLogger("AI_Chatbot")
