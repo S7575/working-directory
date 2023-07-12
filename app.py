@@ -86,6 +86,7 @@ def load_docs(files):
         else:
             st.warning('Please provide txt or pdf.', icon="⚠️")
     return all_text  
+
 def admin(sel_ns):
     # Set the Pinecone index name
     pinecone_index = "aichat"
@@ -120,28 +121,9 @@ def admin(sel_ns):
         # Checkbox for subsequent document uploads
         second_t = st.checkbox('Uploading Document Second time and onwards...')
 
-        if first_t:
-            # Delete the existing index if it exists
-            if pinecone_index in pinecone.list_indexes():
-                pinecone.delete_index(pinecone_index)
-            time.sleep(50)
-            st.info('Initializing Document Uploading to DB...')
-
-            # Create a new Pinecone index
-            pinecone.create_index(
-                    name=pinecone_index,
-                    metric='cosine',
-                    dimension=1536  # 1536 dim of text-embedding-ada-002
-                    )
-            time.sleep(80)
-
-            # Upload documents to the Pinecone index
-            vector_store = Pinecone.from_documents(docs, embeddings, index_name=pinecone_index, namespace= sel_ns)
-            
-            # Display success message
-            st.success("Document Uploaded Successfully!")
         
-        elif second_t:
+        
+        if second_t:
             st.info('Initializing Document Uploading to DB...')
 
             # Upload documents to the Pinecone index
@@ -150,7 +132,12 @@ def admin(sel_ns):
             # Display success message
             st.success("Document Uploaded Successfully!")
 
-
+def create_new_namespace(namespace_name):
+    if namespace_name in pinecone.deployment.list_indexes():
+        st.error(f"Namespace '{namespace_name}' already exists.")
+    else:
+        with st.spinner(f"Creating namespace '{namespace_name}'..."):
+             st.success(f"Successfully created namespace '{namespace_name}'!")
 
 def chat(chat_na):
     # Set the model name and Pinecone index name
@@ -266,6 +253,7 @@ selected_function = st.sidebar.selectbox("Select Option", functions)
 # Call the main() function if "Home" is selected
 if selected_function == "Home":
     main()
+
 # Call the chat() function if "Chatbot" is selected
 elif selected_function == "Chatbot":
     st.session_state.chat_namesp = ""
@@ -276,6 +264,7 @@ elif selected_function == "Chatbot":
         if pinecone_index in pinecone.list_indexes():
             index = pinecone.Index(pinecone_index)
             index_stats_response = index.describe_index_stats()
+
             # Define the options for the dropdown list
             options = list(index_stats_response['namespaces'].keys())
 
@@ -303,6 +292,7 @@ elif selected_function == "Chatbot":
 
         chat_na = st.session_state.chat_namesp
         st.write(f"Selected Namespace Name: {chat_na}")
+
         # Define a dictionary with namespaces and their corresponding messages
         option_messages = {
             "test-1": "This is the message for test-1",
@@ -310,6 +300,7 @@ elif selected_function == "Chatbot":
             "test-3.sec": "This is the message for test-3.sec"
         }
         selected_option = list(option_messages.keys())
+        
         # Check if the selected option is present in the dictionary
         if chat_na in selected_option:
             # Get the corresponding message for the selected option
@@ -320,6 +311,7 @@ elif selected_function == "Chatbot":
             # If the selected option is not found in the dictionary, display a default message
             st.write("No message found for the selected option")
         chat(chat_na)
+
 elif selected_function == "Admin":
     pinecone_index = "aichat"
     # Check if the Pinecone index exists
@@ -330,16 +322,19 @@ elif selected_function == "Admin":
         # Display the available documents in the index
         #st.info(f"The Documents available in index: {list(index_stats_response['namespaces'].keys())}")
         # Define the options for the dropdown list
+
         options = list(index_stats_response['namespaces'].keys())
     st.session_state.sel_namespace = ""
     # Display a text input box in the sidebar to enter the password
     passw = st.sidebar.text_input("Enter your password: ", type="password")
     # Call the admin() function if the correct password is entered
     if passw == "ai4chat":
+
         #namespa = st.text_input("Enter Namespace Name: ")
         exist_name = st.checkbox('Use Existing Namespace to Upload Docs')
         del_name = st.checkbox("Delete a Namespace")
         new_name = st.checkbox("Create New Namespace to Upload Docs")
+
         if exist_name:
             st.write("---")
             st.write("Existing Namespaces:👇")
@@ -351,6 +346,7 @@ elif selected_function == "Admin":
             #selected_namespace = selected_namespace
             # Display the selected value
             st.write("You selected:", st.session_state.sel_namespace)
+
         if del_name:
             st.write("---")
             st.write("Existing Namespaces:👇")
@@ -365,9 +361,12 @@ elif selected_function == "Admin":
                     time.sleep(5)
                     index.delete(namespace=st.session_state.sel_namespace, delete_all=True)
                 st.success('Successfully Deleted Namespace!')
+
         if new_name:
             selected_namespace = st.text_input("Enter Namespace Name: (For Private Namespaces use .sec at the end, e.g., testname.sec)")
             st.session_state.sel_namespace = selected_namespace
+            create_new_namespace(st.session_state.sel_namespace)
         sel_ns = st.session_state.sel_namespace
         admin(sel_ns)
     
+
